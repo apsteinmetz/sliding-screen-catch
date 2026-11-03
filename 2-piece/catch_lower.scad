@@ -3,7 +3,11 @@
 // Plate with a dovetail tongue on top; slides into catch_mount.scad.
 // The leg drops from the front edge (-Y); the foot projects forward.
 //
-// Print: upside down (tongue on the bed), leg pointing up.
+// Print: lying on its side - the +X end (plate edge and open end of the
+// tongue) on the bed, so the L-shaped profile and the dovetail flanks lie
+// in the layer plane. Needs support under the leg and foot only.
+// This file renders in print orientation (catch_lower_print); the assembly
+// and print plate use the modules.
 // ============================================================
 
 include <catch_common.scad>
@@ -44,4 +48,10 @@ module catch_lower() {
     }
 }
 
-catch_lower();
+// Print orientation: rotated so the +X face is on the bed (z = 0),
+// assembled Z (height) runs along +X, Y unchanged.
+module catch_lower_print() {
+    translate([0, 0, plate_w/2]) rotate([0, 90, 0]) catch_lower();
+}
+
+catch_lower_print();
