@@ -6,12 +6,12 @@ _Last updated 2026-11-03_
 
 | Part | Size |
 |---|---|
-| Overall height (foot bottom to frame face) | 50 mm |
+| Overall height (foot bottom to frame face) | 55 mm |
 | Mounting plate | 30 × 30 × 9.25 mm, one countersunk #8 wood screw at the centre |
 | Catch plate | 30 × 30 × 3 mm (thickness is a guess) |
 | Dovetail tongue | 14 → 18 mm wide, 4 mm tall, 0.2 mm clearance per side |
-| Leg | 5 × 5 × 32.75 mm, flush with the front edge |
-| Foot | 5 wide × 10 long × 5 thick, sticks out 5 mm in front of the leg |
+| Leg | 5 × 5 × 37.75 mm, flush with the front edge |
+| Foot | 5 wide × 15 long × 5 thick, sticks out 10 mm in front of the leg |
 
 **Attachment:** the mount is screwed to the frame first (the screw head sits flush in the
 groove ceiling), then the catch slides in sideways until the detent clicks.
@@ -30,7 +30,7 @@ groove ceiling), then the catch slides in sideways until the detent clicks.
 
 ## Printing
 
-Print both parts together from `stl/catch_print_plate.stl` (70 × 35 mm footprint, 45.25 mm tall),
+Print both parts together from `stl/catch_print_plate.stl` (70 × 40 mm footprint, 50.25 mm tall),
 already laid out in print orientation:
 
 - **Catch:** as installed, foot on the bed. The tongue and plate top (the fit surfaces) print on top.

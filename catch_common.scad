@@ -19,10 +19,10 @@ leg_w        = 5;    // leg cross-section, X
 leg_d        = 5;    // leg cross-section, Y
 
 foot_w       = 5;    // foot width, X
-foot_l       = 10;   // foot length, Y (total, incl. the part under the leg)
+foot_l       = 15;   // foot length, Y (total, incl. the part under the leg)
 foot_t       = 5;    // foot thickness, Z
 
-total_h      = 50;   // bottom of foot to top of mount (frame face) - overall assembled height
+total_h      = 55;   // bottom of foot to top of mount (frame face) - overall assembled height
 
 // ---- Dovetail joint ----
 dt_h         = 4;    // tongue height
@@ -47,8 +47,8 @@ screw_csk_angle = 90; // included angle (82 for US imperial screws, 90 metric)
 // ---- Derived ----
 csk_depth    = (screw_head_d - screw_d) / 2 / tan(screw_csk_angle / 2);   // ~2.05
 mount_t      = dt_h + dt_clear + csk_depth + screw_meat;                   // ~9.25
-catch_h      = total_h - mount_t;            // foot bottom to catch plate top, ~40.75
-leg_h        = catch_h - plate_t - foot_t;   // ~32.75
+catch_h      = total_h - mount_t;            // foot bottom to catch plate top, ~45.75
+leg_h        = catch_h - plate_t - foot_t;   // ~37.75
 front_y      = -plate_d / 2;
 leg_y0       = front_y;                      // leg flush with front edge
 foot_y0      = leg_y0 + leg_d - foot_l;      // foot projects forward (-Y)
