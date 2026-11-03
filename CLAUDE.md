@@ -24,11 +24,11 @@ Current status and print/assembly notes are in `README.md`.
 
 ## Design decisions (settled with the user)
 
-- Overall height is **55 mm**, foot bottom to frame face (`total_h`).
+- Overall height is **57 mm**, foot bottom to frame face (`total_h`).
 - Mount thickness is **derived** (`mount_t = dt_h + dt_clear + csk_depth + screw_meat`);
-  the leg length absorbs the rest so the total stays 55 mm. Never hard-code `mount_t` or `leg_h`.
-- Leg 5×5 mm, flush with the plate front edge (-Y). Foot 5 wide × 15 long × 5 thick,
-  projecting forward (away from the plate); the 15 mm includes the 5 mm under the leg (10 mm projection).
+  the leg length absorbs the rest so the total stays 57 mm. Never hard-code `mount_t` or `leg_h`.
+- Leg 5×5 mm, flush with the plate front edge (-Y). Foot 5 wide × 17 long × 5 thick,
+  projecting forward (away from the plate); the 17 mm includes the 5 mm under the leg (12 mm projection).
 - Attachment: sliding dovetail + snap detent. Which end of the channel is closed does not matter.
 - One countersunk wood screw for now (#8 / ~4 mm flat head). A second screw was offered and declined.
 
