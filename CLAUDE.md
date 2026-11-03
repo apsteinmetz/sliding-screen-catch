@@ -40,6 +40,12 @@ Current status and print/assembly notes are in `README.md`.
   sketch or confirmed by the user with `// guess`.
 - One module per feature, joined in a top-level module per part.
 
+## Repository
+
+- Public repo: https://github.com/apsteinmetz/sliding-screen-catch (branch `main`).
+- Commits must use the GitHub noreply email (set in this repo's local git config);
+  the user does not want their personal email in the public history.
+
 ## Tooling
 
 - OpenSCAD 2021.01 is installed as a **Flatpak**: run it as `flatpak run org.openscad.OpenSCAD`
