@@ -1,0 +1,4 @@
+# Intermediate render outputs (regenerate with ./make_cutaways.sh)
+render/
+stl/cut_*.stl
+__pycache__/
