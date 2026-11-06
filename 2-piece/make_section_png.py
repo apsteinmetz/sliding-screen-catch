@@ -7,7 +7,7 @@ check the 10 mm and 50 mm bars with a ruler before trusting the scale.
 
 Sections:
   A-A  plane X=0  (through screw, leg, foot, dovetail profile)   1:1
-  B-B  plane Y=0  (along the slide: end wall, screw, detent)      1:1
+  B-B  plane Y=0  (along the slide: open channel, screw, detents) 1:1
   C    one dovetail flank from A-A                                4:1
 """
 import math, re, pathlib
@@ -24,7 +24,10 @@ env = {"tan": lambda d: math.tan(math.radians(d)),
 for line in (HERE / "catch_common.scad").read_text().splitlines():
     m = re.match(r"\s*([A-Za-z_]\w*)\s*=\s*([^;]+);", line)
     if m:
-        env[m.group(1)] = eval(m.group(2), {"__builtins__": {}}, env)
+        try:
+            env[m.group(1)] = eval(m.group(2), {"__builtins__": {}}, env)
+        except (NameError, SyntaxError, TypeError):
+            pass  # OpenSCAD-only expressions (flex analysis functions)
 P = type("P", (), env)
 
 ceil_z = P.tongue_top_z + P.dt_clear
@@ -48,6 +51,29 @@ def trap(wb, wt, z0, z1):
     return [(-wb / 2, z0), (wb / 2, z0), (wt / 2, z1), (-wt / 2, z1)]
 
 
+def leg_profile():
+    """Tapered leg: front face flush, back face from leg_t (root) to leg_t_tip (foot)."""
+    return [(P.leg_y0, P.foot_t), (P.leg_y0 + P.leg_t_tip, P.foot_t),
+            (P.leg_y0 + P.leg_t, P.plate_bot_z), (P.leg_y0, P.plate_bot_z)]
+
+
+def fillet_profile(n=16):
+    """Concave root fillet between the leg's back face and the plate underside."""
+    r, y0, z0 = P.leg_fillet_r, P.leg_y0 + P.leg_t, P.plate_bot_z
+    # quarter circle centred at (y0 + r, z0 - r), from the leg face up to the plate
+    arc = [(y0 + r - r * math.cos(math.radians(90 * i / n)),
+            z0 - r + r * math.sin(math.radians(90 * i / n))) for i in range(n + 1)]
+    return [(y0, z0 + 0.05)] + arc + [(y0 + r, z0 + 0.05)]
+
+
+def foot_profile():
+    """Foot side profile: front-top chamfer, then one 45-degree bevel down and back to
+    the extension bottom (foot_ext_bot long); back edge straight down."""
+    c, y0, y1, t, ze = P.foot_bevel, P.foot_y0, P.foot_y0 + P.foot_l, P.foot_t, P.foot_ext_z
+    return [(y1 - P.foot_ext_bot, ze), (y1, ze), (y1, t + 0.05),
+            (y0 + c, t + 0.05), (y0, t - c)]
+
+
 def sections():
     """Return {name: [(colour, polygon_or_circle), ...]} in (horizontal, Z) mm."""
     csk = [(-P.screw_head_d / 2, ceil_z), (P.screw_head_d / 2, ceil_z),
@@ -61,20 +87,21 @@ def sections():
         (BG, csk), (BG, shank),
         (CATCH, rect(-P.plate_d / 2, P.plate_d / 2, P.plate_top_z - P.plate_t, P.plate_top_z)),
         (CATCH, trap(P.dt_w_bot, P.dt_w_top, P.plate_top_z, P.tongue_top_z)),
-        (CATCH, rect(P.leg_y0, P.leg_y0 + P.leg_d, P.foot_t, P.plate_top_z - P.plate_t)),
-        (CATCH, rect(P.foot_y0, P.foot_y0 + P.foot_l, 0, P.foot_t)),
+        (CATCH, leg_profile()),
+        (CATCH, fillet_profile()),
+        (CATCH, foot_profile()),
     ]
-    # B-B: horizontal = X (open end of channel, +X, on the right)
+    # B-B: horizontal = X (+X on the right); channel open at both ends
     dim_cz = P.tongue_top_z + P.dt_clear - (P.det_r - P.det_h) + 0.1
     bump_cz = P.tongue_top_z - (P.det_r - P.det_h)
     b = [
         (MOUNT, rect(-P.plate_w / 2, P.plate_w / 2, P.plate_top_z, mount_top)),
-        (BG, rect(-P.plate_w / 2 + P.end_wall, P.plate_w / 2 + 0.5, P.plate_top_z - 0.05, ch_top)),
-        (BG, ("circle", P.det_x, dim_cz, P.det_r + 0.1)),
+        (BG, rect(-P.plate_w / 2 - 0.5, P.plate_w / 2 + 0.5, P.plate_top_z - 0.05, ch_top)),
+        *[(BG, ("circle", x, dim_cz, P.det_r + 0.1)) for x in (-P.det_x, P.det_x)],
         (BG, csk), (BG, shank),
         (CATCH, rect(-P.plate_w / 2, P.plate_w / 2, P.plate_top_z - P.plate_t, P.plate_top_z)),
-        (CATCH, rect(P.tongue_x0, P.plate_w / 2, P.plate_top_z, P.tongue_top_z)),
-        (CATCH, ("circle", P.det_x, bump_cz, P.det_r, P.tongue_top_z)),
+        (CATCH, rect(P.tongue_x0, P.tongue_x0 + P.tongue_len, P.plate_top_z, P.tongue_top_z)),
+        *[(CATCH, ("circle", x, bump_cz, P.det_r, P.tongue_top_z)) for x in (-P.det_x, P.det_x)],
     ]
     return a, b
 
@@ -109,15 +136,15 @@ def main():
     f = ImageFont.load_default(size=30)
     fs = ImageFont.load_default(size=24)
     s = PX_MM
-    base = H - 18 * s          # pixel row of Z=0
+    base = H - 26 * s          # pixel row of Z=0 (foot extension goes below)
     a, b = sections()
 
     # A-A at 1:1
     oxa = 32 * s
     draw_shapes(d, a, oxa, base, s)
     d.text((oxa, base - (mount_top + 4) * s), "A-A  (X = 0)  1:1", fill=INK, font=f, anchor="mm")
-    d.text((oxa - 14 * s, base + 4 * s), "front (-Y)", fill=DIM, font=fs, anchor="mm")
-    vdim(d, oxa + 19 * s, base, base - mount_top * s, f"{P.total_h:g}", fs)
+    d.text((oxa - 14 * s, base - (P.foot_ext_z - 4) * s), "front (-Y)", fill=DIM, font=fs, anchor="mm")
+    vdim(d, oxa + 19 * s, base - P.foot_ext_z * s, base - mount_top * s, f"{P.total_h - P.foot_ext_z:g}", fs)
     vdim(d, oxa - 23 * s, base - P.plate_top_z * s, base - mount_top * s, f"{P.mount_t:.2f}", fs)
     d.text((oxa - 23 * s - 8, base - (P.plate_top_z + P.mount_t / 2) * s), "mount", fill=DIM, font=fs, anchor="rm")
     d.text((oxa - 18.5 * s, base - 20 * s), f"leg {P.leg_h:.2f}", fill=DIM, font=fs, anchor="rm")
@@ -126,7 +153,7 @@ def main():
     oxb = 88 * s
     draw_shapes(d, b, oxb, base, s)
     d.text((oxb, base - (mount_top + 4) * s), "B-B  (Y = 0)  1:1", fill=INK, font=f, anchor="mm")
-    d.text((oxb + 15 * s, base - (P.plate_top_z - 6) * s), "slides in from + X ->", fill=DIM, font=fs, anchor="rm")
+    d.text((oxb + 15 * s, base - (P.plate_top_z - 6) * s), "<- slides in from either side ->", fill=DIM, font=fs, anchor="rm")
 
     # C: joint detail, 4:1, one flank of the dovetail (front side, -Y)
     k = 4 * s

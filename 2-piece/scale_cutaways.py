@@ -20,18 +20,21 @@ env = {"tan": lambda d: math.tan(math.radians(d))}
 for line in (HERE / "catch_common.scad").read_text().splitlines():
     m = re.match(r"\s*([A-Za-z_]\w*)\s*=\s*([^;]+);", line)
     if m:
-        env[m.group(1)] = eval(m.group(2), {"__builtins__": {}}, env)
+        try:
+            env[m.group(1)] = eval(m.group(2), {"__builtins__": {}}, env)
+        except (NameError, SyntaxError, TypeError):
+            pass  # OpenSCAD-only expressions (flex analysis functions)
 P = type("P", (), env)
 
 mount_top = P.plate_top_z + P.mount_t
 VIEWS = {
     # name: (title, extent across mm, extent down mm, note)
     "A": ("Cutaway A-A: cut at X = 0 (through screw, leg and foot)",
-          P.plate_d / 2 - P.foot_y0, mount_top,
+          P.plate_d / 2 - P.foot_y0, mount_top - P.foot_ext_z,
           "front (-Y) on the left"),
     "B": ("Cutaway B-B: cut at Y = 0 (along the slide direction)",
           P.plate_w, mount_top,
-          "catch slides in from the left (+X)"),
+          "catch slides in from either side"),
 }
 
 

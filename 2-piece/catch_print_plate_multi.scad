@@ -23,20 +23,21 @@ margin = 5;     // keep-out at the bed edge // guess
 gap    = 3;     // minimum spacing between parts // guess
 
 // ---- One set (catch + mount), footprint in catch_lower_print() coordinates ----
-// Catch footprint is an L: foot at X 0..foot_t, leg along Y -15..-10,
+// Catch footprint is an L: foot at X foot_ext_z..foot_t (extension below 0),
+// leg along Y -15..-12 (root),
 // plate + tongue at X catch_h-plate_t .. catch_x.
-catch_x  = tongue_top_z + det_h;          // catch length on the bed, ~52.25
-leg_in_y = leg_y0 + leg_d;                // inner (+Y) face of the leg, -10
+catch_x  = tongue_top_z + det_h;          // catch length on the bed, ~52.95
+leg_in_y = leg_y0 + leg_t;                // inner (+Y) face of the leg at its root (thickest), -12
 mount_cx = foot_t + gap + plate_w/2;      // mount centre, beside the foot
 mount_cy = leg_in_y + gap + plate_d/2;    // mount centre, beside the leg
 set_y0   = foot_y0;                       // lowest Y of a set (foot tip), -27
 set_y1   = mount_cy + plate_d/2;          // highest Y of a set (mount edge)
 
-// The mount must fit between the foot and the plate.
-assert(mount_cx + plate_w/2 + gap <= catch_h - plate_t,
+// The mount must fit between the foot and the leg-root fillet.
+assert(mount_cx + plate_w/2 + gap <= plate_bot_z - leg_fillet_r,
        "mount does not fit in the pocket beside the leg");
 
-pitch_x  = catch_x + gap;
+pitch_x  = catch_x - foot_ext_z + gap;
 // next row's leg (outer face at front_y) clears this row's mount
 pitch_y  = set_y1 + gap - front_y;
 set_h    = set_y1 - set_y0;
@@ -66,7 +67,7 @@ module set() {
 
 module grid() {
     for (c = [0 : cols - 1], r = [0 : rows - 1])
-        translate([c * pitch_x, r * pitch_y - set_y0, 0]) set();
+        translate([c * pitch_x - foot_ext_z, r * pitch_y - set_y0, 0]) set();
 }
 
 // Grid centred on the origin (slicers centre the model on the bed anyway).

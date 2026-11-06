@@ -35,6 +35,8 @@ foot_w       = 5;    // foot width, X
 foot_proj    = 12;   // how far the foot sticks out in front of the leg
 foot_t       = 5;    // foot thickness, Z
 foot_bevel   = 0.8;  // 45-degree chamfer on the foot's outside edges // guess
+foot_ext_bot = 2;    // foot extends below z = 0 until its bottom is this long (Y): back edge
+                     // straight down, front a 45-degree bevel below the front-top chamfer
 
 total_h      = 57;   // bottom of foot to frame face - overall installed height
 
@@ -52,6 +54,7 @@ foot_l       = foot_proj + leg_t_tip;       // total foot length incl. the part 
 front_y      = -plate_d / 2;
 leg_y0       = front_y;                     // leg flush with front edge
 foot_y0      = leg_y0 + leg_t_tip - foot_l; // foot projects forward (-Y)
+foot_ext_z   = foot_t - foot_bevel - (foot_l - foot_ext_bot);  // bottom of the foot extension, below z = 0
 
 // ---- Flex analysis (tapered cantilever, point load at the foot) ----
 // s = distance down from the leg root (0 .. leg_h).

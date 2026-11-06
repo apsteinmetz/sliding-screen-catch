@@ -3,7 +3,8 @@
 CAD project for a catch for a sliding screen, modeled in OpenSCAD. The repo root is
 `screen catch/` and holds two self-contained variants:
 
-- `2-piece/` — a mounting plate screwed to the frame above, and a catch that slides into it toolless.
+- `2-piece/` — a mounting plate screwed to the frame above, and a catch that slides into it toolless
+  from either end. Its leg is the same tapered cantilever spring as the 1-piece.
 - `1-piece/` — a single part screwed to the frame, with a tapered flexible leg; push the foot
   forward ~5 mm to release. Designed for PLA.
 
@@ -13,10 +14,14 @@ the variants share no code, so change both when a shared dimension changes.
 
 ## Files — `2-piece/`
 
-- `catch_common.scad` — **all dimensions live here**, plus the `dovetail()` helper.
-  Included by every other `.scad` file and read by `make_section_png.py`.
-- `catch_lower.scad` — the catch: plate, dovetail tongue with detent bump, leg, foot.
-- `catch_mount.scad` — mounting plate: dovetail channel, countersunk screw hole, detent dimple.
+- `catch_common.scad` — **all dimensions live here**, plus the `dovetail()` helper and the leg
+  flex analysis (copied from `1-piece/catch1_common.scad`, same `assert` on `max_strain`).
+  Included by every other `.scad` file and read by `make_section_png.py` / `scale_cutaways.py`
+  (their parsers skip the OpenSCAD-only flex-analysis lines).
+- `catch_lower.scad` — the catch: plate, full-width dovetail tongue with two detent bumps, tapered
+  leg, root fillet, chamfered foot (leg/fillet/foot modules copied from `1-piece/catch_1piece.scad`).
+- `catch_mount.scad` — mounting plate: dovetail channel open at both ends, countersunk screw hole,
+  two detent dimples.
 - `catch_assembly.scad` — both parts in installed position (`explode` param to separate).
 - `catch_print_plate.scad` — both parts in print orientation side by side → `stl/catch_print_plate.stl`.
   Catch prints lying on its side (+X end on the bed, supports under leg and foot); mount prints
@@ -32,7 +37,16 @@ the variants share no code, so change both when a shared dimension changes.
 - `catch_section_view.scad`, `make_cutaways.sh`, `scale_cutaways.py` — true-scale OpenSCAD
   cutaway renders (see Tooling).
 - `catch_cutaway_A.png`, `catch_cutaway_B.png`, `stl/` — generated; `render/` and
-  `stl/cut_*.stl` are intermediates, git-ignored.
+  `stl/cut_*.stl` are intermediates, git-ignored. `stl/*.3mf` are PrusaSlicer projects saved by
+  the user; they cannot be regenerated from OpenSCAD.
+
+## Files — top level
+
+- `catch_print_plate_combined.scad` — the 2-piece set plus the 1-piece catch on one plate
+  → `stl/catch_print_plate_combined.stl`. Both catches are turned 90° about Z (length along Y),
+  side by side left of the mount; the mount is placed as in `2-piece/catch_print_plate.scad`.
+  Standing the catches upright (plate down) was tried and rejected (2026-11-05): it needs more
+  support material than lying them on their side.
 
 ## Files — `1-piece/`
 
@@ -50,16 +64,29 @@ the variants share no code, so change both when a shared dimension changes.
 Shared by both variants:
 
 - Overall height is **57 mm**, foot bottom to frame face (`total_h`).
+- Tapered cantilever spring leg with root fillet; push the foot forward (-Y) ~5 mm to release.
+  **PLA**: keep root strain ≤ 1 %. The two variants' leg/foot code is duplicated, so change both.
 - Leg flush with the plate front edge (-Y). Foot 5 wide × 5 thick, projecting forward (away from
   the plate) 12 mm in front of the leg; foot length = 12 + the leg thickness under it.
+- Foot extension below the foot block (z < 0), both variants (2026-11-06): back edge straight down;
+  front keeps the front-top chamfer, then one 45° bevel down and back until the bottom is
+  `foot_ext_bot` = 2 mm long (`foot_ext_z` ≈ -7.4 2-piece, -7.8 1-piece). `total_h` (57) is still
+  measured from z = 0, the bottom of the foot block; the leg and flex analysis are unchanged.
 - One countersunk wood screw for now (#8 / ~4 mm flat head). A second screw was offered and declined.
 
 2-piece:
 
 - Mount thickness is **derived** (`mount_t = dt_h + dt_clear + csk_depth + screw_meat`);
   the leg length absorbs the rest so the total stays 57 mm. Never hard-code `mount_t` or `leg_h`.
-- Leg 5×5 mm; foot 17 mm long (12 mm projection + 5 under the leg).
-- Attachment: sliding dovetail + snap detent. Which end of the channel is closed does not matter.
+- Leg is a cantilever spring, same design as the 1-piece (decided 2026-11-05): 5 mm wide, tapers
+  3.0 → 1.6 mm (thinner than the 1-piece's 3.5 → 2.0 because the leg is shorter; that taper
+  would be 1.06 % strain), 3 mm root fillet, foot chamfered 0.8 mm; currently 0.9 % strain,
+  5.3 N push force. Print material is PLA.
+- Mount 1 mm thinner than originally (`screw_meat` 3 → 2, 2026-11-05); total height stays 57 mm.
+- Detent bumps `det_h` = 0.7 mm (0.5 did not quite click into the dimples on the test print).
+- Attachment: sliding dovetail + snap detent. The channel is open at both ends (no end wall) so the
+  catch slides in from either side; detent bump/dimple pairs at ±`det_x` both click home together
+  (decided 2026-11-05). The detents alone locate the catch along X.
 
 1-piece:
 
@@ -72,7 +99,7 @@ Shared by both variants:
 ## Conventions
 
 - Units are millimetres. Origin at the plate centre, Z up, frame above (+Z), front is -Y,
-  (2-piece) catch slides in from +X.
+  (2-piece) catch slides in along X from either end.
 - Keep dimensions as named parameters in each variant's common file; mark anything not taken
   from the sketch or confirmed by the user with `// guess`.
 - One module per feature, joined in a top-level module per part.
@@ -85,7 +112,10 @@ Shared by both variants:
 
 ## Tooling
 
-- OpenSCAD 2021.01 is installed as a **Flatpak**: run it as `flatpak run org.openscad.OpenSCAD`
+- On the Windows machine, OpenSCAD 2021.01 is at `C:\Program Files\OpenSCAD\openscad.com`; pass
+  Windows-style absolute paths (`pwd -W` in Git Bash). `make_cutaways.sh` hard-codes the Flatpak
+  command, so run its steps by hand there.
+- Elsewhere, OpenSCAD 2021.01 is installed as a **Flatpak**: run it as `flatpak run org.openscad.OpenSCAD`
   (there is no `openscad` on PATH). Pass absolute paths for input and output files, and run
   from inside the variant folder. Example:
   `cd 2-piece && flatpak run org.openscad.OpenSCAD -o "$PWD/stl/catch_lower.stl" "$PWD/catch_lower.scad"`.

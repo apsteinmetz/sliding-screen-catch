@@ -8,11 +8,12 @@ Designed for **PLA**.
 
 | Feature | Size |
 |---|---|
-| Overall height (foot bottom to frame face) | 57 mm (same as 2-piece) |
+| Overall height (foot bottom to frame face) | 57 mm (same as 2-piece) to the bottom of the foot block; 64.8 mm including the foot extension |
 | Plate | 30 × 30 × 5.05 mm, one countersunk #8 wood screw at the centre, head flush in the underside |
 | Leg | 5 wide (X) × 46.95 mm long, flush with the front edge; **tapers from 3.5 mm thick at the root to 2.0 mm at the foot** (Y, flex direction) |
 | Leg root | 3 mm fillet on the back face (the side that is stretched when you push the foot) |
 | Foot | 5 wide × 14 long × 5 thick, sticks out 12 mm in front of the leg (same as 2-piece); 0.8 mm chamfer on the outside edges |
+| Foot extension | Below the foot, 7.8 mm deep: back edge straight down, front a 45° bevel starting under the front-top chamfer, down to a 2 mm long bottom (`foot_ext_bot`, same as 2-piece) |
 
 ### Flex in PLA
 
@@ -21,7 +22,7 @@ stay under about **1 %**. The leg is sized for that:
 
 | Leg | Root strain at 5 mm | Push force |
 |---|---|---|
-| 5 × 5 straight (2-piece leg) | ~1.7 % | — |
+| 5 × 5 straight (original 2-piece leg) | ~1.7 % | — |
 | 3.5 straight (first 1-piece draft) | 1.2 % | 8.5 N |
 | **3.5 → 2.0 taper (current)** | **0.8 %** | **5.7 N** (about 0.6 kg) |
 

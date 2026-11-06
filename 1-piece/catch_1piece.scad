@@ -53,10 +53,10 @@ module leg_fillet() {
         }
 }
 
-// Foot with every exposed edge chamfered by foot_bevel. Edges that run
+// Foot block (z 0 .. foot_t) with every exposed edge chamfered by foot_bevel. Edges that run
 // into the leg (top edges of the part under the leg) stay square so the
 // leg's faces carry straight down into the foot.
-module catch_foot() {
+module foot_block() {
     c  = foot_bevel;
     y0 = foot_y0;  y1 = foot_y0 + foot_l;  w = foot_w / 2;  t = foot_t;
     intersection() {
@@ -79,6 +79,39 @@ module catch_foot() {
                 linear_extrude(y1 - leg_y0 + 1)
                     polygon([[-w + c, 0], [w - c, 0], [w, c], [w, t + 1], [-w, t + 1], [-w, c]]);
         }
+    }
+}
+
+// Foot extension below the foot (z < 0). Back edge (+Y, under the leg)
+// drops straight down. The foot keeps its front-top chamfer; below it the
+// front is one 45-degree bevel running down and back until the bottom is
+// foot_ext_bot long (the vertical front face and lower front chamfers are
+// cut away). Full foot width in X.
+
+// Y-Z profile, extruded across X (width w, centred).
+module foot_yz(pts, w) {
+    rotate([90, 0, 90]) translate([0, 0, -w/2]) linear_extrude(w) polygon(pts);
+}
+
+module foot_extension() {
+    zt = foot_t - foot_bevel;   // bevel starts at (foot_y0, zt)
+    y1 = foot_y0 + foot_l;
+    foot_yz([[foot_y0 + zt - foot_bevel, foot_bevel], [y1, foot_bevel],
+             [y1, foot_ext_z], [y1 - foot_ext_bot, foot_ext_z]], foot_w);
+}
+
+// Everything in front of the 45-degree bevel line (below the chamfer).
+module foot_front_cut() {
+    zt = foot_t - foot_bevel;  zl = foot_ext_z - 1;  e = 0.01;
+    foot_yz([[foot_y0 - e, foot_t + 1], [foot_y0 - e, zt],
+             [foot_y0 - e + zt - zl, zl],
+             [foot_y0 - 1, zl], [foot_y0 - 1, foot_t + 1]], foot_w + 2);
+}
+
+module catch_foot() {
+    difference() {
+        union() { foot_block(); foot_extension(); }
+        foot_front_cut();
     }
 }
 
