@@ -33,7 +33,7 @@ VIEWS = {
           P.plate_d / 2 - P.foot_y0, mount_top - P.foot_ext_z,
           "front (-Y) on the left"),
     "B": ("Cutaway B-B: cut at Y = 0 (along the slide direction)",
-          P.plate_w, mount_top,
+          P.plate_w, mount_top - P.foot_ext_z,
           "catch slides in from either side"),
 }
 

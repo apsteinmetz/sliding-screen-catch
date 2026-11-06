@@ -97,7 +97,7 @@ with a ruler. Regenerate with `python3 make_section_png.py` after changing any d
 - `catch_cutaway_A.png` — cut through the screw, front to back: leg, foot, dovetail, countersink.
 - `catch_cutaway_B.png` — cut along the slide direction: open channel, screw, both detent bumps in their dimples.
 
-Both are **actual size** at 300 dpi (110 × 102 mm page): print at 100 % with no fit-to-page and
+Both are **actual size** at 300 dpi (110 × 116 mm page): print at 100 % with no fit-to-page and
 check the 10 mm / 50 mm bars with a ruler. Regenerate with `./make_cutaways.sh`.
 
 ## STL export
