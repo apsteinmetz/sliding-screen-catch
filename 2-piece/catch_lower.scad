@@ -140,4 +140,17 @@ module catch_lower_print() {
     translate([0, 0, plate_w/2]) rotate([0, 90, 0]) catch_lower();
 }
 
+// Support enforcer for the slicer (print orientation): the plan outline of
+// everything that hangs above the bed - leg, root fillet and foot (all of the
+// catch below the plate underside) - from the bed up through the top of the
+// foot. With "supports from enforcers only", support is generated only inside
+// this outline, so it never spreads past the leg and foot.
+module catch_lower_support_enforcer() {
+    linear_extrude(plate_w/2 + foot_w/2 + 0.5)
+        projection() intersection() {
+            catch_lower_print();
+            translate([-100, -100, -1]) cube([100 + plate_bot_z, 200, 200]);
+        }
+}
+
 catch_lower_print();

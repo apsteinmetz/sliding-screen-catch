@@ -61,14 +61,16 @@ assert** if the strain goes over `max_strain` (1 %). Change `leg_t` / `leg_t_tip
 - [ ] Test print; tune `dt_clear` (fit) and `det_h` (click strength; without an end wall the
       detents are all that keep the catch from sliding out)
 - [ ] Check push force and that 5 mm of foot travel clears the screen; tune `leg_t` / `leg_t_tip`
-- [ ] Re-save `stl/*.3mf` (PrusaSlicer projects) from the new STLs; they still hold the old
-      design
+- [x] PrusaSlicer projects `stl/*.3mf` rebuilt from the current STLs with leg/foot support
+      enforcers (2026-11-06)
 - [ ] Confirm catch plate thickness (3 mm guess)
 
 ## Printing
 
-Print both parts together from `stl/catch_print_plate.stl` (100 × 42 mm footprint, 30 mm tall),
-already laid out in print orientation:
+Print both parts together from `stl/catch_print_plate.stl` (60 × 42 mm footprint, 30 mm tall),
+already laid out in print orientation. The mount sits under the catch's leg, between the foot
+and the catch plate, so the leg's supports stand on the mount (same nesting as the batch plate
+below):
 
 - **Catch:** lying on its side, with the +X end of the plate and tongue on the bed. The L-shaped
   leg/foot profile and the dovetail flanks are in the layer plane, so the spring never bends
@@ -80,12 +82,25 @@ Slicer settings for the spring leg: **100 % infill or enough walls to make the l
 (e.g. 5+ perimeters at 0.4 mm), and normal-to-warm nozzle temperature for good layer bonding.
 
 **Batch printing:** `stl/catch_print_plate_multi.stl` packs as many catch + mount sets as fit
-(15 sets on a 220 × 220 mm bed, 15 on 235 mm, 18 on 256 mm). Each mount sits beside its catch's leg,
-and the rows interlock. Set `bed_x` / `bed_y` in `catch_print_plate_multi.scad` for your printer
+(21 sets on the default 250 × 210 mm Original Prusa MK3S bed; 18 on 220 × 220 mm, 21 on 256 mm). Each mount sits directly under
+its catch's leg, front edge flush with the leg's front face, so the leg's supports stand on the
+mount's front rail (8.25 mm up) instead of reaching down to the bed. The rows interlock: each
+foot sits beside the mount of the row below. Set `bed_x` / `bed_y` in `catch_print_plate_multi.scad` for your printer
 and re-export. The set count is echoed in the OpenSCAD console.
 
 If your slicer puts supports everywhere, split the STL into separate objects
-("Split to objects") and enable supports for the catch only.
+("Split to objects") and enable supports for the catch only. On the multi-set plate, supports
+must be allowed to start on the model (not "support on build plate only"), or the legs above
+the mounts get no support.
+
+**PrusaSlicer projects:** `stl/catch_print_plate.3mf` and `stl/catch_print_plate_multi.3mf`
+(Original Prusa MK3S, Generic PLA, 0.20 mm SPEED) are ready to slice. Each holds the plate as one
+object, so the leg supports can stand on the mounts, plus a **support enforcer** volume: the plan
+outline of each leg, root fillet and foot. Supports are set to *enforcers only*, *snug* style, not
+build-plate-only, with the first-layer support expansion (`raft_first_layer_expansion`) at 0,
+so support stays inside the leg and foot outline (checked in the sliced G-code: every support
+line within 0.5 mm of it). The enforcer volume is exported from the same `.scad` files with
+`-D enforcers=true`.
 
 ## Test-fit drawing
 
@@ -106,5 +121,5 @@ check the 10 mm / 50 mm bars with a ruler. Regenerate with `./make_cutaways.sh`.
 flatpak run org.openscad.OpenSCAD -o "$PWD/stl/catch_lower.stl" "$PWD/catch_lower.scad"
 flatpak run org.openscad.OpenSCAD -o "$PWD/stl/catch_mount.stl" "$PWD/catch_mount.scad"
 flatpak run org.openscad.OpenSCAD -o "$PWD/stl/catch_print_plate.stl" "$PWD/catch_print_plate.scad"
-flatpak run org.openscad.OpenSCAD -o "$PWD/stl/catch_print_plate_multi.stl" -D bed_x=220 -D bed_y=220 "$PWD/catch_print_plate_multi.scad"
+flatpak run org.openscad.OpenSCAD -o "$PWD/stl/catch_print_plate_multi.stl" "$PWD/catch_print_plate_multi.scad"
 ```

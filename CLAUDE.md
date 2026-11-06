@@ -23,28 +23,35 @@ the variants share no code, so change both when a shared dimension changes.
 - `catch_mount.scad` — mounting plate: dovetail channel open at both ends, countersunk screw hole,
   two detent dimples.
 - `catch_assembly.scad` — both parts in installed position (`explode` param to separate).
-- `catch_print_plate.scad` — both parts in print orientation side by side → `stl/catch_print_plate.stl`.
+- `catch_print_plate.scad` — both parts in print orientation → `stl/catch_print_plate.stl`. The mount
+  is nested under the catch's leg (as on the multi plate) so the leg's supports stand on it.
   Catch prints lying on its side (+X end on the bed, supports under leg and foot); mount prints
   frame face down. `catch_lower.scad` renders in this print orientation (`catch_lower_print()`);
   the assembly and section views use `catch_lower()` in installed coordinates.
   Do not print the catch tongue-down: the plate would overhang and the detent bump would be on the bed.
 - `catch_print_plate_multi.scad` — as many catch + mount sets as fit on the bed
-  (`bed_x`/`bed_y`, default 220 × 220 is a guess), mounts nested beside each leg, rows
-  interlocked, grid turned 90° if that fits more → `stl/catch_print_plate_multi.stl`.
+  (`bed_x`/`bed_y`, default 250 × 210 = the user's Original Prusa MK3S), grid turned 90° if that fits more
+  → `stl/catch_print_plate_multi.stl`. Each mount sits directly under its catch's leg (front
+  edge flush with the leg's front face) so the leg's supports stand on the mount's front rail
+  (user's request, 2026-11-06); rows interlock, each foot beside the mount of the row below.
 - `make_section_png.py` — renders `catch_section.png` (1:1 cross-sections at 300 dpi for
   test fitting). Needs Pillow only. Re-run after changing any dimension.
 - `catch_section.png` — generated; do not edit by hand.
 - `catch_section_view.scad`, `make_cutaways.sh`, `scale_cutaways.py` — true-scale OpenSCAD
   cutaway renders (see Tooling).
 - `catch_cutaway_A.png`, `catch_cutaway_B.png`, `stl/` — generated; `render/` and
-  `stl/cut_*.stl` are intermediates, git-ignored. `stl/*.3mf` are PrusaSlicer projects saved by
-  the user; they cannot be regenerated from OpenSCAD.
+  `stl/cut_*.stl` are intermediates, git-ignored. `stl/*.3mf` are PrusaSlicer projects (MK3S,
+  Generic PLA, settings from the user's own project). Rebuilt 2026-11-06 by packing each plate STL
+  plus its support-enforcer volume (`-D enforcers=true` on `catch_print_plate.scad` /
+  `catch_print_plate_multi.scad`, module `catch_lower_support_enforcer()`) into one object;
+  supports are enforcers only, snug, `raft_first_layer_expansion` = 0, so support never spreads
+  past the leg and foot (user requirement). The user may also re-save them from PrusaSlicer.
 
 ## Files — top level
 
 - `catch_print_plate_combined.scad` — the 2-piece set plus the 1-piece catch on one plate
   → `stl/catch_print_plate_combined.stl`. Both catches are turned 90° about Z (length along Y),
-  side by side left of the mount; the mount is placed as in `2-piece/catch_print_plate.scad`.
+  side by side left of the mount, which sits `gap` to the right of the catch plates.
   Standing the catches upright (plate down) was tried and rejected (2026-11-05): it needs more
   support material than lying them on their side.
 
