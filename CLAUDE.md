@@ -52,7 +52,6 @@ the variants share no code, so change both when a shared dimension changes.
   past the leg and foot (user requirement). The user may also re-save them from PrusaSlicer. `catch_print_plate.3mf` was rebuilt 2026-11-08 from the
   09f34db project's settings (snug, no raft, first-layer expansion 0) after a user re-save had switched to
   grid/organic support with a raft and 3 mm expansion, which spread support past the leg and foot.
-  `archive-09f34db/` holds that commit's files for reference.
 
 ## Files — top level
 
