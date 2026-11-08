@@ -1,12 +1,12 @@
 # Sliding Screen Catch
 
-CAD project for a catch for a sliding screen, modeled in OpenSCAD. The repo root is
+CAD project for a catch for a Sunscape brand sliding screen, modeled in OpenSCAD. The repo root is
 `screen catch/` and holds two self-contained variants:
 
 - `2-piece/` — a mounting plate screwed to the frame above, and a catch that slides into it toolless
   from either end. Its leg is the same tapered cantilever spring as the 1-piece.
 - `1-piece/` — a single part screwed to the frame, with a tapered flexible leg; push the foot
-  forward ~5 mm to release. Designed for PLA.
+  forward ~3 mm to release. Designed for PLA.
 
 This work started in a Claude desktop Project. `README.md` is the overview; current status and
 print/assembly notes are in each variant's `README.md`. Each variant has its own parameter file;
@@ -34,6 +34,10 @@ the variants share no code, so change both when a shared dimension changes.
   → `stl/catch_print_plate_multi.stl`. Each mount sits directly under its catch's leg (front
   edge flush with the leg's front face) so the leg's supports stand on the mount's front rail
   (user's request, 2026-11-06); rows interlock, each foot beside the mount of the row below.
+- `catch_print_plate_10.scad` — exactly `n_sets` (10) sets, same set layout as the multi plate;
+  picks the smallest-area grid that fits the bed (2 × 5), last row may be part-filled
+  → `stl/catch_print_plate_10.stl` / `stl/catch_print_plate_10.3mf` (multi plate's PrusaSlicer
+  settings + enforcer volume; user's request, 2026-11-08). Keep its set geometry in sync with the multi plate.
 - `make_section_png.py` — renders `catch_section.png` (1:1 cross-sections at 300 dpi for
   test fitting). Needs Pillow only. Re-run after changing any dimension.
 - `catch_section.png` — generated; do not edit by hand.
@@ -45,7 +49,10 @@ the variants share no code, so change both when a shared dimension changes.
   plus its support-enforcer volume (`-D enforcers=true` on `catch_print_plate.scad` /
   `catch_print_plate_multi.scad`, module `catch_lower_support_enforcer()`) into one object;
   supports are enforcers only, snug, `raft_first_layer_expansion` = 0, so support never spreads
-  past the leg and foot (user requirement). The user may also re-save them from PrusaSlicer.
+  past the leg and foot (user requirement). The user may also re-save them from PrusaSlicer. `catch_print_plate.3mf` was rebuilt 2026-11-08 from the
+  09f34db project's settings (snug, no raft, first-layer expansion 0) after a user re-save had switched to
+  grid/organic support with a raft and 3 mm expansion, which spread support past the leg and foot.
+  `archive-09f34db/` holds that commit's files for reference.
 
 ## Files — top level
 
@@ -63,34 +70,41 @@ the variants share no code, so change both when a shared dimension changes.
 - `catch_1piece.scad` — the part: plate with countersink from below, tapered leg, root fillet,
   chamfered foot. Renders in print orientation (`catch_1piece_print()`, +X face on the bed);
   `catch_1piece()` is in installed coordinates. → `stl/catch_1piece.stl`.
-- `catch_1piece_flexed.scad` — preview only: rest vs. leg pushed `release_flex` (5 mm).
+- `catch_1piece_flexed.scad` — preview only: rest vs. leg pushed `release_flex` (3 mm).
 - `render/` — preview images, git-ignored.
 
 ## Design decisions (settled with the user)
 
 Shared by both variants:
 
-- Overall height is **57 mm**, foot bottom to frame face (`total_h`).
-- Tapered cantilever spring leg with root fillet; push the foot forward (-Y) ~5 mm to release.
+- Overall height is **50 mm** (was 57; leg shortened 9 mm and foot lengthened 3 mm 2026-11-07, then several 1 mm leg tweaks through 2026-11-08), foot bottom to frame face (`total_h`).
+- Tapered cantilever spring leg with root fillet; push the foot forward (-Y) ~3 mm to release
+  (`release_flex`, 5 → 3 mm on 2026-11-07).
   **PLA**: keep root strain ≤ 1 %. The two variants' leg/foot code is duplicated, so change both.
-- Leg flush with the plate front edge (-Y). Foot 5 wide × 5 thick, projecting forward (away from
-  the plate) 12 mm in front of the leg; foot length = 12 + the leg thickness under it.
+- Leg flush with the plate front edge (-Y). Leg and foot 7 wide (`leg_w`, `foot_w`, 5 → 7 on 2026-11-07); foot 5 thick, projecting forward (away from
+  the plate) 15 mm in front of the leg; foot length = 15 + the leg thickness under it.
 - Foot extension below the foot block (z < 0), both variants (2026-11-06): back edge straight down;
   front keeps the front-top chamfer, then one 45° bevel down and back until the bottom is
-  `foot_ext_bot` = 2 mm long (`foot_ext_z` ≈ -7.4 2-piece, -7.8 1-piece). `total_h` (57) is still
+  `foot_ext_bot` = 2 mm long (`foot_ext_z` ≈ -10.2 2-piece, -10.6 1-piece). `total_h` (50) is still
   measured from z = 0, the bottom of the foot block; the leg and flex analysis are unchanged.
 - One countersunk wood screw for now (#8 / ~4 mm flat head). A second screw was offered and declined.
+  Countersink deepened 0.5 mm (2026-11-07): `screw_head_d` 8.6 → 9.6, `csk_depth` ≈ 2.55.
 
 2-piece:
 
 - Mount thickness is **derived** (`mount_t = dt_h + dt_clear + csk_depth + screw_meat`);
-  the leg length absorbs the rest so the total stays 57 mm. Never hard-code `mount_t` or `leg_h`.
-- Leg is a cantilever spring, same design as the 1-piece (decided 2026-11-05): 5 mm wide, tapers
-  3.0 → 1.6 mm (thinner than the 1-piece's 3.5 → 2.0 because the leg is shorter; that taper
-  would be 1.06 % strain), 3 mm root fillet, foot chamfered 0.8 mm; currently 0.9 % strain,
-  5.3 N push force. Print material is PLA.
-- Mount 1 mm thinner than originally (`screw_meat` 3 → 2, 2026-11-05); total height stays 57 mm.
+  the leg length absorbs the rest so the total stays 50 mm. Never hard-code `mount_t` or `leg_h`.
+- Leg is a cantilever spring, same design as the 1-piece (decided 2026-11-05): 7 mm wide, 33.55 mm long,
+  tapers 2.8 → 1.4 mm (thickened 2026-11-07 when the release travel dropped to 3 mm; user chose
+  "moderately stiffer"), 3 mm root fillet, foot chamfered 0.8 mm; currently 0.7 % strain, 6.2 N push force. Print material is PLA.
+- Mount 1 mm thinner than originally (`screw_meat` 3 → 2, 2026-11-05); total height stays 50 mm.
+  `screw_meat` 2 → 1.5 with the deeper countersink (2026-11-07) so `mount_t` stayed 8.25 (8.45 since `dt_clear` 0.3 and `dt_h` 4.1): the mount
+  must clear the leg (plate_w/2 - leg_w/2 above the bed, now 9.0 mm; asserted in both print-plate files) on the nested print plates.
+- Mount/catch plate `plate_w` shrunk 30 → 22 mm (X), then 24 mm for the 7 mm leg (print-plate `gap` 3 → 2.5), then 25 mm for `dt_clear` 0.3 (2026-11-08), and `det_x` 11 → 7 on 2026-11-07 so the mount still
+  nests in the pocket under the shorter leg on the print plates (user's choice).
 - Detent bumps `det_h` = 0.7 mm (0.5 did not quite click into the dimples on the test print).
+- Dovetail joint (`dt_*`, `det_*`): change only when the user asks. `dt_clear` 0.2 → 0.3 (2026-11-08) because
+  0.2 printed too tight; `dt_h` 4 → 4.1 to match (2026-11-08).
 - Attachment: sliding dovetail + snap detent. The channel is open at both ends (no end wall) so the
   catch slides in from either side; detent bump/dimple pairs at ±`det_x` both click home together
   (decided 2026-11-05). The detents alone locate the catch along X.
@@ -98,9 +112,9 @@ Shared by both variants:
 1-piece:
 
 - Screws directly to the frame above; plate thickness derived (`plate_t = csk_depth + screw_meat`).
-- Leg flexes forward (-Y) ~5 mm to release. **Print material is PLA**: keep root strain ≤ 1 %.
-  Leg tapers 3.5 → 2.0 mm thick (Y), 5 mm wide, with a 3 mm fillet at the root (back face);
-  currently 0.8 % strain, 5.7 N push force.
+- Leg flexes forward (-Y) ~3 mm to release. **Print material is PLA**: keep root strain ≤ 1 %.
+  Leg tapers 3.5 → 1.8 mm thick (Y), 7 mm wide, with a 3 mm fillet at the root (back face);
+  currently 0.6 % strain, 7.5 N push force at 3 mm (2026-11-08; plate 5.55 mm, leg 39.45 mm).
 - Foot outside edges have a slight bevel (`foot_bevel` = 0.8 mm); edges running into the leg stay square.
 
 ## Conventions

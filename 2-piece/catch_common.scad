@@ -16,52 +16,52 @@
 $fn = 64;
 
 // ---- Catch (lower part) ----
-plate_w      = 30;   // plate size, X
+plate_w      = 25;   // plate size, X
 plate_d      = 30;   // plate size, Y
 plate_t      = 3;    // catch plate thickness // guess - not on sketch
 
 // ---- Leg (flex spring, same design as 1-piece) ----
-leg_w        = 5;    // leg width, X (stiff direction)
-leg_t        = 3.0;  // leg thickness at the root, Y (flex direction) // guess
-leg_t_tip    = 1.6;  // leg thickness at the foot - linear taper spreads the strain along the leg // guess
+leg_w        = 7;    // leg width, X (stiff direction)
+leg_t        = 2.8;  // leg thickness at the root, Y (flex direction) // guess
+leg_t_tip    = 1.4;  // leg thickness at the foot - linear taper spreads the strain along the leg // guess
 leg_fillet_r = 3;    // fillet at the leg root, back (tension) side // guess
-release_flex = 5;    // foot travel needed to release the catch
+release_flex = 3;    // foot travel needed to release the catch
 
 // ---- Material: PLA ----
 mat_E        = 3300; // MPa, PLA printed with layers along the leg // guess (typical 3000-3500)
 max_strain   = 0.01; // allowed peak strain for repeated flexing in PLA (yield ~2-3 %, brittle)
 
 // ---- Foot ----
-foot_w       = 5;    // foot width, X
-foot_proj    = 12;   // how far the foot sticks out in front of the leg
+foot_w       = 7;    // foot width, X
+foot_proj    = 15;   // how far the foot sticks out in front of the leg
 foot_t       = 5;    // foot thickness, Z
 foot_bevel   = 0.8;  // 45-degree chamfer on the foot's outside edges // guess
 foot_ext_bot = 2;    // foot extends below z = 0 until its bottom is this long (Y): back edge
                      // straight down, front a 45-degree bevel below the front-top chamfer
 
-total_h      = 57;   // bottom of foot to top of mount (frame face) - overall assembled height
+total_h      = 50;   // bottom of foot to top of mount (frame face) - overall assembled height
 
 // ---- Dovetail joint ----
-dt_h         = 4;    // tongue height
+dt_h         = 4.1;   // tongue height
 dt_w_bot     = 14;   // tongue width where it meets the catch plate (narrow)
 dt_w_top     = 18;   // tongue width at its top face (wide)
-dt_clear     = 0.2;  // clearance per side - tune for your printer
+dt_clear     = 0.3;  // clearance per side - tune for your printer
 
 // ---- Snap detent (one bump/dimple pair at each of +-det_x) ----
-det_x        = 11;   // detent distance from the centre along X, near each channel end
+det_x        = 7;    // detent distance from the centre along X, near each channel end
 det_r        = 1.5;  // bump sphere radius
 det_h        = 0.7;  // bump height above tongue top - raise for a firmer click (0.5 did not quite catch)
 
 // ---- Mounting plate ----
-screw_meat   = 2;    // solid material between countersink bottom and frame face (was 3; mount 1 mm thinner)
+screw_meat   = 1.5;  // solid material between countersink bottom and frame face (was 3, then 2; 1.5 keeps mount_t 8.25 with the deeper countersink)
 
 // ---- Wood screw (#8 / ~4 mm flat head) ----
 screw_d      = 4.5;  // shank clearance hole
-screw_head_d = 8.6;  // countersink diameter at the surface
+screw_head_d = 9.6;  // countersink diameter at the surface
 screw_csk_angle = 90; // included angle (82 for US imperial screws, 90 metric)
 
 // ---- Derived ----
-csk_depth    = (screw_head_d - screw_d) / 2 / tan(screw_csk_angle / 2);   // ~2.05
+csk_depth    = (screw_head_d - screw_d) / 2 / tan(screw_csk_angle / 2);   // ~2.55
 mount_t      = dt_h + dt_clear + csk_depth + screw_meat;                   // ~8.25
 catch_h      = total_h - mount_t;            // foot bottom to catch plate top, ~48.75
 leg_h        = catch_h - plate_t - foot_t;   // flexing length, ~40.75

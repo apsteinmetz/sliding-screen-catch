@@ -20,34 +20,34 @@ plate_d      = 30;   // plate size, Y
 screw_meat   = 3;    // solid material between countersink bottom and frame face
 
 // ---- Leg (flex spring) ----
-leg_w        = 5;    // leg width, X (stiff direction) - same as 2-piece
+leg_w        = 7;    // leg width, X (stiff direction) - same as 2-piece
 leg_t        = 3.5;  // leg thickness at the root, Y (flex direction) // guess
-leg_t_tip    = 2.0;  // leg thickness at the foot - linear taper spreads the strain along the leg // guess
+leg_t_tip    = 1.8;  // leg thickness at the foot - linear taper spreads the strain along the leg // guess
 leg_fillet_r = 3;    // fillet at the leg root, back (tension) side // guess
-release_flex = 5;    // foot travel needed to release the catch
+release_flex = 3;    // foot travel needed to release the catch
 
 // ---- Material: PLA ----
 mat_E        = 3300; // MPa, PLA printed with layers along the leg // guess (typical 3000-3500)
 max_strain   = 0.01; // allowed peak strain for repeated flexing in PLA (yield ~2-3 %, brittle)
 
 // ---- Foot ----
-foot_w       = 5;    // foot width, X
-foot_proj    = 12;   // how far the foot sticks out in front of the leg
+foot_w       = 7;    // foot width, X
+foot_proj    = 15;   // how far the foot sticks out in front of the leg
 foot_t       = 5;    // foot thickness, Z
 foot_bevel   = 0.8;  // 45-degree chamfer on the foot's outside edges // guess
 foot_ext_bot = 2;    // foot extends below z = 0 until its bottom is this long (Y): back edge
                      // straight down, front a 45-degree bevel below the front-top chamfer
 
-total_h      = 57;   // bottom of foot to frame face - overall installed height
+total_h      = 50;   // bottom of foot to frame face - overall installed height
 
 // ---- Wood screw (#8 / ~4 mm flat head) ----
 screw_d      = 4.5;  // shank clearance hole
-screw_head_d = 8.6;  // countersink diameter at the surface
+screw_head_d = 9.6;  // countersink diameter at the surface
 screw_csk_angle = 90; // included angle (82 for US imperial screws, 90 metric)
 
 // ---- Derived ----
-csk_depth    = (screw_head_d - screw_d) / 2 / tan(screw_csk_angle / 2);   // ~2.05
-plate_t      = csk_depth + screw_meat;      // ~5.05, countersunk from below
+csk_depth    = (screw_head_d - screw_d) / 2 / tan(screw_csk_angle / 2);   // ~2.55
+plate_t      = csk_depth + screw_meat;      // ~5.55, countersunk from below
 plate_bot_z  = total_h - plate_t;
 leg_h        = plate_bot_z - foot_t;        // flexing length, ~46.95
 foot_l       = foot_proj + leg_t_tip;       // total foot length incl. the part under the leg

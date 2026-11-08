@@ -22,7 +22,7 @@ use <catch_mount.scad>
 bed_x  = 250;   // usable bed size, X - Original Prusa MK3S (from the user's PrusaSlicer project)
 bed_y  = 210;   // usable bed size, Y - Original Prusa MK3S
 margin = 5;     // keep-out at the bed edge // guess
-gap    = 3;     // minimum spacing between parts // guess
+gap    = 2.5;   // minimum spacing between parts // guess
 enforcers = false;   // true: export the support-enforcer volumes instead (see catch_lower.scad)
 
 // ---- One set (catch + mount), footprint in catch_lower_print() coordinates ----
@@ -38,6 +38,9 @@ set_y1   = mount_cy + plate_d/2;          // highest Y of a set (mount edge)
 // The mount must fit between the foot and the leg-root fillet.
 assert(mount_cx + plate_w/2 + gap <= plate_bot_z - leg_fillet_r,
        "mount does not fit in the pocket beside the leg");
+// The leg lies plate_w/2 - leg_w/2 above the bed; the mount (mount_t tall) must clear it.
+assert(plate_w/2 - leg_w/2 >= mount_t + 0.2,
+       "mount touches the leg - widen plate_w");
 
 pitch_x  = catch_x - foot_ext_z + gap;
 // next row's leg (outer face at front_y) clears this row's mount and plate;
