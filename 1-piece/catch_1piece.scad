@@ -2,7 +2,7 @@
 // Sliding screen catch - one-piece variant
 // Plate screws to the frame above with one countersunk wood screw
 // (head sits flush in the plate underside). The leg is a cantilever
-// spring; push the foot forward (-Y) ~5 mm to release.
+// spring; push the foot forward (-Y) ~3 mm to release.
 //
 // Print: lying on its side, +X face on the bed, so the leg's length and
 // its bending direction lie in the layer plane (layers never run across

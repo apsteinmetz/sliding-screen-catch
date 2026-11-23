@@ -13,14 +13,14 @@ removing the catch. Designed for **PLA**. All paths below are relative to this f
 | Part | Size |
 |---|---|
 | Overall height (foot bottom to frame face) | 50 mm (`total_h`) to the bottom of the foot block; 60.2 mm including the foot extension |
-| Mounting plate | 25 × 30 × 8.45 mm (25 mm along X), one countersunk #8 wood screw at the centre (9.6 mm countersink, 2.55 mm deep; 1.5 mm of material between countersink and frame face) |
+| Mounting plate | 25 × 30 × 8.25 mm (25 mm along X), one countersunk #8 wood screw at the centre (9.6 mm countersink, 2.55 mm deep; 1.5 mm of material between countersink and frame face) |
 | Catch plate | 25 × 30 × 3 mm (thickness is a guess) |
-| Dovetail tongue | 14 → 18 mm wide, 4.1 mm tall (`dt_h`, 4 → 4.1 with the clearance change), full 25 mm plate width, 0.3 mm clearance per side (`dt_clear`, 0.2 → 0.3 on 2026-11-08: 0.2 was too tight) |
-| Snap detent | Two bumps on the tongue / two dimples in the mount, 7 mm either side of the screw; bumps 0.7 mm tall (0.4 mm interference after the 0.3 mm clearance) |
-| Leg | 7 wide (X) × 33.55 mm long, flush with the front edge; **tapers from 2.8 mm thick at the root to 1.4 mm at the foot** (Y, flex direction) |
+| Dovetail tongue | 14 → 18 mm wide, 4.0 mm tall (`dt_h`), full 25 mm plate width, 0.2 mm clearance per side (`dt_clear`: 0.2 printed too tight, 0.3 on 2026-11-08, 0.25 then back to 0.2 on 2026-11-23 at the user's request) |
+| Snap detent | Two bumps on the tongue / two dimples in the mount, 7 mm either side of the screw; bumps 0.6 mm tall (0.4 mm interference after the 0.2 mm clearance) |
+| Leg | 7 wide (X) × 33.75 mm long, flush with the front edge; **tapers from 3.4 mm thick at the root to 2.0 mm at the foot** (Y, flex direction) |
 | Leg root | 3 mm fillet on the back face (the side that is stretched when you push the foot) |
-| Foot | 7 wide × 16.4 long × 5 thick, sticks out 15 mm in front of the leg; 0.8 mm chamfer on the outside edges |
-| Foot extension | Below the foot, 10.2 mm deep: back edge straight down, front a 45° bevel starting under the front-top chamfer, down to a 2 mm long bottom (`foot_ext_bot`) |
+| Foot | 7 wide × 17.0 long × 5 thick, sticks out 15 mm in front of the leg; 0.8 mm chamfer on the outside edges |
+| Foot extension | Below the foot, 10.8 mm deep: back edge straight down, front a 45° bevel starting under the front-top chamfer, down to a 2 mm long bottom (`foot_ext_bot`) |
 
 **Attachment:** the mount is screwed to the frame first (the screw head sits flush in the
 groove ceiling), then the catch slides in sideways from either end. The leading bump clicks
@@ -40,7 +40,9 @@ thinner here:
 | 5 × 5 straight (previous 2-piece leg), 5 mm travel | ~2 % | — |
 | 3.5 → 2.0 taper (1-piece leg, 40.75 mm long), 5 mm travel | 1.06 % | 8.8 N |
 | 2.2 → 1.1 taper, 5 wide, 32.75 mm long, 5 mm travel (previous) | 0.94 % | 3.8 N |
-| **2.8 → 1.4 taper, 7 wide, 3 mm travel (current)** | **0.7 %** | **6.2 N** (about 0.6 kg) |
+| 2.8 → 1.4 taper, 7 wide, 33.55 mm long, 3 mm travel (previous) | 0.68 % | 6.2 N |
+| 3.2 → 1.8 taper, 7 wide, 33.55 mm long, 3 mm travel (previous) | 0.85 % | 10.0 N |
+| **3.4 → 2.0 taper, 7 wide, 33.75 mm long, 3 mm travel (current)** | **0.9 %** | **12.1 N** (about 1.2 kg) |
 
 `catch_common.scad` computes the strain and force the same way as the 1-piece
 (`mat_E` = 3300 MPa, a guess) and `catch_lower.scad` echoes them. Rendering **fails with an
@@ -54,11 +56,11 @@ assert** if the strain goes over `max_strain` (1 %). Change `leg_t` / `leg_t_tip
 - [x] Channel open at both ends: catch slides in from either side (2026-11-05)
 - [x] Cantilever spring leg + chamfered foot from the 1-piece design; detent bumps 0.5 → 0.7 mm;
       mount 1 mm thinner, leg 1 mm longer (2026-11-05)
-- [x] 1:1 cross-section PNG for test fitting (`catch_section.png`)
+- [x] 1:1 cross-section PNG for test fitting (removed 2026-11-23, no longer generated)
 - [x] Render in OpenSCAD: both parts are clean single solids; STLs in `stl/`
 - [x] Combined print-plate STL (`stl/catch_print_plate.stl`)
 - [x] Multi-set print plate for batch printing (`stl/catch_print_plate_multi.stl`), plus a 10-set plate
-- [x] OpenSCAD cutaway images (`catch_cutaway_A.png`, `catch_cutaway_B.png`)
+- [x] OpenSCAD cutaway images (removed 2026-11-23, no longer generated)
 - [ ] Test print; tune `dt_clear` (fit) and `det_h` (click strength; without an end wall the
       detents are all that keep the catch from sliding out)
 - [ ] Check push force and that 3 mm of foot travel clears the screen; tune `leg_t` / `leg_t_tip`
@@ -85,12 +87,12 @@ Slicer settings for the spring leg: **100 % infill or enough walls to make the l
 **Batch printing:** `stl/catch_print_plate_multi.stl` packs as many catch + mount sets as fit
 (21 sets on the default 250 × 210 mm Original Prusa MK3S bed). Each mount sits directly under
 its catch's leg, front edge flush with the leg's front face, so the leg's supports stand on the
-mount's front rail (8.45 mm up) instead of reaching down to the bed. The rows interlock: each
+mount's front rail (8.25 mm up) instead of reaching down to the bed. The rows interlock: each
 foot sits beside the mount of the row below. Set `bed_x` / `bed_y` in `catch_print_plate_multi.scad` for your printer
 and re-export. The set count is echoed in the OpenSCAD console.
 
 **10-set plate:** `stl/catch_print_plate_10.stl` / `stl/catch_print_plate_10.3mf` hold exactly 10 sets
-(2 × 5, 115.6 × 175 mm), laid out the same way. `catch_print_plate_10.scad` picks the smallest grid that
+(2 × 5, 116.8 × 175 mm), laid out the same way. `catch_print_plate_10.scad` picks the smallest grid that
 fits `n_sets` on the bed, so change `n_sets` for another count. The PrusaSlicer project uses the
 multi plate's settings and enforcers (about 7 h 15 min and 78 g of PLA).
 
@@ -107,19 +109,6 @@ build-plate-only, with the first-layer support expansion (`raft_first_layer_expa
 so support stays inside the leg and foot outline (checked in the sliced G-code: every support
 line within 0.5 mm of it). The enforcer volume is exported from the same `.scad` files with
 `-D enforcers=true`.
-
-## Test-fit drawing
-
-`catch_section.png` — print at 100 % (no "fit to page"), then check the 10 mm and 50 mm bars
-with a ruler. Regenerate with `python3 make_section_png.py` after changing any dimension.
-
-## OpenSCAD cutaways
-
-- `catch_cutaway_A.png` — cut through the screw, front to back: leg, foot, dovetail, countersink.
-- `catch_cutaway_B.png` — cut along the slide direction: open channel, screw, both detent bumps in their dimples.
-
-Both are **actual size** at 300 dpi (110 × 116 mm page): print at 100 % with no fit-to-page and
-check the 10 mm / 50 mm bars with a ruler. Regenerate with `./make_cutaways.sh`.
 
 ## STL export
 

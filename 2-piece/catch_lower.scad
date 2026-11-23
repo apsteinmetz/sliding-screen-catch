@@ -5,7 +5,7 @@
 // tongue clicks into the matching mount dimple.
 // The leg drops from the front edge (-Y); the foot projects forward.
 // The leg is a cantilever spring, same design as the 1-piece variant:
-// push the foot forward (-Y) ~5 mm to release the screen.
+// push the foot forward (-Y) ~3 mm to release the screen.
 //
 // Print: lying on its side - the +X end (plate edge and end of the
 // tongue) on the bed, so the L-shaped profile, the dovetail flanks and
@@ -65,6 +65,10 @@ module leg_fillet() {
 // Foot block (z 0 .. foot_t) with every exposed edge chamfered by foot_bevel. Edges that run
 // into the leg (top edges of the part under the leg) stay square so the
 // leg's faces carry straight down into the foot.
+// Y where the foot's square (unchamfered) top edges start: the leg's front face. Version B has
+// a thicker leg that reaches further forward, so its chamfer stops there instead (flush with the leg).
+foot_split_y = is_undef(catch_lower_B) ? leg_y0 : leg_y0 - leg_b_add;
+
 module foot_block() {
     c  = foot_bevel;
     y0 = foot_y0;  y1 = foot_y0 + foot_l;  w = foot_w / 2;  t = foot_t;
@@ -81,11 +85,11 @@ module foot_block() {
         // front of the leg
         union() {
             translate([0, y0 - 1, 0]) rotate([-90, 0, 0]) mirror([0, 1, 0])
-                linear_extrude(leg_y0 - y0 + 1)
+                linear_extrude(foot_split_y - y0 + 1)
                     polygon([[-w + c, 0], [w - c, 0], [w, c], [w, t - c],
                              [w - c, t], [-w + c, t], [-w, t - c], [-w, c]]);
-            translate([0, leg_y0, 0]) rotate([-90, 0, 0]) mirror([0, 1, 0])
-                linear_extrude(y1 - leg_y0 + 1)
+            translate([0, foot_split_y, 0]) rotate([-90, 0, 0]) mirror([0, 1, 0])
+                linear_extrude(y1 - foot_split_y + 1)
                     polygon([[-w + c, 0], [w - c, 0], [w, c], [w, t + 1], [-w, t + 1], [-w, c]]);
         }
     }
@@ -153,4 +157,4 @@ module catch_lower_support_enforcer() {
         }
 }
 
-catch_lower_print();
+if (is_undef(catch_lower_B)) catch_lower_print();   // catch_lower_B.scad includes this file and renders its own part

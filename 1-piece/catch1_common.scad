@@ -4,7 +4,7 @@
 //
 // Same envelope as the 2-piece design, but the plate screws straight to
 // the frame above and the leg is a cantilever spring: push the foot
-// forward (-Y) about 5 mm to release the screen.
+// forward (-Y) about 3 mm to release the screen.
 //
 // Coordinate system (installed position):
 //   Origin at plate centre (X, Y), Z up, foot bottom at z = 0.
@@ -21,8 +21,8 @@ screw_meat   = 3;    // solid material between countersink bottom and frame face
 
 // ---- Leg (flex spring) ----
 leg_w        = 7;    // leg width, X (stiff direction) - same as 2-piece
-leg_t        = 3.5;  // leg thickness at the root, Y (flex direction) // guess
-leg_t_tip    = 1.8;  // leg thickness at the foot - linear taper spreads the strain along the leg // guess
+leg_t        = 3.9;  // leg thickness at the root, Y (flex direction) // guess
+leg_t_tip    = 2.2;  // leg thickness at the foot - linear taper spreads the strain along the leg // guess
 leg_fillet_r = 3;    // fillet at the leg root, back (tension) side // guess
 release_flex = 3;    // foot travel needed to release the catch
 
@@ -49,7 +49,7 @@ screw_csk_angle = 90; // included angle (82 for US imperial screws, 90 metric)
 csk_depth    = (screw_head_d - screw_d) / 2 / tan(screw_csk_angle / 2);   // ~2.55
 plate_t      = csk_depth + screw_meat;      // ~5.55, countersunk from below
 plate_bot_z  = total_h - plate_t;
-leg_h        = plate_bot_z - foot_t;        // flexing length, ~46.95
+leg_h        = plate_bot_z - foot_t;        // flexing length, ~39.45
 foot_l       = foot_proj + leg_t_tip;       // total foot length incl. the part under the leg
 front_y      = -plate_d / 2;
 leg_y0       = front_y;                     // leg flush with front edge
@@ -65,7 +65,7 @@ flex_n = 200;        // integration steps
 function _c(s, i = 0) = i >= flex_n ? 0 :
     let(x = (i + 0.5) * s / flex_n)
     (leg_h - x) * (s - x) / leg_I(x) * s / flex_n + _c(s, i + 1);
-push_force   = release_flex * mat_E / _c(leg_h);              // N, to push the foot 5 mm
+push_force   = release_flex * mat_E / _c(leg_h);              // N, to push the foot release_flex mm
 function leg_defl(s) = push_force / mat_E * _c(s);            // mm, deflected shape
 flex_strain  = push_force * leg_h * (leg_t / 2) / (mat_E * leg_I(0));  // peak, at the root
 assert(flex_strain <= max_strain,

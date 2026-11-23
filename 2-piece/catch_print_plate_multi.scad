@@ -7,7 +7,7 @@
 // Nesting: each mount sits in the open pocket between its catch's foot and
 // plate, directly under the leg: the mount's front edge is flush with the
 // leg's front face, so the leg's supports stand on the mount's front rail
-// (8.25 mm tall) instead of the bed. Rows interlock: a row's feet sit beside
+// (~8.25 mm tall) instead of the bed. Rows interlock: a row's feet sit beside
 // the mounts of the row below. The grid is turned 90 deg if that fits more sets.
 //
 // Set bed_x / bed_y for your printer, then export:
@@ -27,12 +27,12 @@ enforcers = false;   // true: export the support-enforcer volumes instead (see c
 
 // ---- One set (catch + mount), footprint in catch_lower_print() coordinates ----
 // Catch footprint is an L: foot at X foot_ext_z..foot_t (extension below 0),
-// leg along Y -15..-12 (root),
+// leg along Y -15 .. -15+leg_t (root),
 // plate + tongue at X catch_h-plate_t .. catch_x.
-catch_x  = tongue_top_z + det_h;          // catch length on the bed, ~52.95
+catch_x  = tongue_top_z + det_h;          // catch length on the bed, ~46.35
 mount_cx = foot_t + gap + plate_w/2;      // mount centre, beside the foot
 mount_cy = leg_y0 + plate_d/2;           // mount centre: front edge flush with the leg's front face, mount under the leg
-set_y0   = foot_y0;                       // lowest Y of a set (foot tip), -27
+set_y0   = foot_y0;                       // lowest Y of a set (foot tip), -30
 set_y1   = mount_cy + plate_d/2;          // highest Y of a set (mount edge)
 
 // The mount must fit between the foot and the leg-root fillet.

@@ -3,7 +3,7 @@
 // Included by catch_lower.scad, catch_mount.scad, catch_assembly.scad
 //
 // The leg is a cantilever spring like the 1-piece variant's: push the
-// foot forward (-Y) about 5 mm to release the screen without removing
+// foot forward (-Y) about 3 mm to release the screen without removing
 // the catch from the mount.
 //
 // Coordinate system (assembled position):
@@ -22,8 +22,8 @@ plate_t      = 3;    // catch plate thickness // guess - not on sketch
 
 // ---- Leg (flex spring, same design as 1-piece) ----
 leg_w        = 7;    // leg width, X (stiff direction)
-leg_t        = 2.8;  // leg thickness at the root, Y (flex direction) // guess
-leg_t_tip    = 1.4;  // leg thickness at the foot - linear taper spreads the strain along the leg // guess
+leg_t        = 3.4;  // leg thickness at the root, Y (flex direction) // guess
+leg_t_tip    = 2.0;  // leg thickness at the foot - linear taper spreads the strain along the leg // guess
 leg_fillet_r = 3;    // fillet at the leg root, back (tension) side // guess
 release_flex = 3;    // foot travel needed to release the catch
 
@@ -39,21 +39,22 @@ foot_bevel   = 0.8;  // 45-degree chamfer on the foot's outside edges // guess
 foot_ext_bot = 2;    // foot extends below z = 0 until its bottom is this long (Y): back edge
                      // straight down, front a 45-degree bevel below the front-top chamfer
 
-total_h      = 50;   // bottom of foot to top of mount (frame face) - overall assembled height
+// leg_extra: set by catch_lower_B.scad (before it includes this file) to lengthen the leg; undefined = 0
+total_h      = 50 + (is_undef(leg_extra) ? 0 : leg_extra);   // bottom of foot to top of mount (frame face) - overall assembled height
 
 // ---- Dovetail joint ----
-dt_h         = 4.1;   // tongue height
+dt_h         = 4.0;   // tongue height
 dt_w_bot     = 14;   // tongue width where it meets the catch plate (narrow)
 dt_w_top     = 18;   // tongue width at its top face (wide)
-dt_clear     = 0.3;  // clearance per side - tune for your printer
+dt_clear     = 0.2;  // clearance per side - tune for your printer
 
 // ---- Snap detent (one bump/dimple pair at each of +-det_x) ----
 det_x        = 7;    // detent distance from the centre along X, near each channel end
 det_r        = 1.5;  // bump sphere radius
-det_h        = 0.7;  // bump height above tongue top - raise for a firmer click (0.5 did not quite catch)
+det_h        = 0.6;  // bump height above tongue top - raise for a firmer click (0.5 did not quite catch); interference = det_h - dt_clear
 
 // ---- Mounting plate ----
-screw_meat   = 1.5;  // solid material between countersink bottom and frame face (was 3, then 2; 1.5 keeps mount_t 8.25 with the deeper countersink)
+screw_meat   = 1.5;  // solid material between countersink bottom and frame face (was 3, then 2, then 1.5 - mount_t is now ~8.25)
 
 // ---- Wood screw (#8 / ~4 mm flat head) ----
 screw_d      = 4.5;  // shank clearance hole
@@ -63,8 +64,8 @@ screw_csk_angle = 90; // included angle (82 for US imperial screws, 90 metric)
 // ---- Derived ----
 csk_depth    = (screw_head_d - screw_d) / 2 / tan(screw_csk_angle / 2);   // ~2.55
 mount_t      = dt_h + dt_clear + csk_depth + screw_meat;                   // ~8.25
-catch_h      = total_h - mount_t;            // foot bottom to catch plate top, ~48.75
-leg_h        = catch_h - plate_t - foot_t;   // flexing length, ~40.75
+catch_h      = total_h - mount_t;            // foot bottom to catch plate top, ~41.75
+leg_h        = catch_h - plate_t - foot_t;   // flexing length, ~33.75
 foot_l       = foot_proj + leg_t_tip;        // total foot length incl. the part under the leg
 front_y      = -plate_d / 2;
 leg_y0       = front_y;                      // leg flush with front edge
@@ -85,7 +86,7 @@ flex_n = 200;        // integration steps
 function _c(s, i = 0) = i >= flex_n ? 0 :
     let(x = (i + 0.5) * s / flex_n)
     (leg_h - x) * (s - x) / leg_I(x) * s / flex_n + _c(s, i + 1);
-push_force   = release_flex * mat_E / _c(leg_h);              // N, to push the foot 5 mm
+push_force   = release_flex * mat_E / _c(leg_h);              // N, to push the foot release_flex mm
 function leg_defl(s) = push_force / mat_E * _c(s);            // mm, deflected shape
 flex_strain  = push_force * leg_h * (leg_t / 2) / (mat_E * leg_I(0));  // peak, at the root
 assert(flex_strain <= max_strain,
