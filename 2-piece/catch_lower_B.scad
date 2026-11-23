@@ -12,6 +12,7 @@
 
 catch_lower_B = true;   // tells catch_lower.scad not to render its own part
 leg_extra = 1;          // leg 1 mm longer: the foot sits 1 mm lower, total height 51 mm
+foot_extra = 1;         // foot 1 mm longer (projects 16 mm in front of the leg)
 
 leg_b_drop = 10;    // thickening starts this far below the catch plate underside
 leg_b_add  = 2;     // extra leg thickness, toward the front (-Y)

@@ -33,7 +33,7 @@ max_strain   = 0.01; // allowed peak strain for repeated flexing in PLA (yield ~
 
 // ---- Foot ----
 foot_w       = 7;    // foot width, X
-foot_proj    = 15;   // how far the foot sticks out in front of the leg
+foot_proj    = 15 + (is_undef(foot_extra) ? 0 : foot_extra);   // how far the foot sticks out in front of the leg
 foot_t       = 5;    // foot thickness, Z
 foot_bevel   = 0.8;  // 45-degree chamfer on the foot's outside edges // guess
 foot_ext_bot = 2;    // foot extends below z = 0 until its bottom is this long (Y): back edge

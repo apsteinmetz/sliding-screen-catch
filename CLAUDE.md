@@ -23,7 +23,7 @@ the variants share no code, so change both when a shared dimension changes.
 - `catch_lower_B.scad` — version B of the catch (user's request, 2026-11-23): `use`s `catch_lower.scad` and adds 2 mm
   to the front (-Y) and 1 mm to the back (+Y, `leg_b_back`, parallel to the tapered back face, full length of leg and foot down to the foot extension bottom) of the leg; the front thickening runs from 10 mm (`leg_b_drop`, was 5) below the plate underside down to the foot top (horizontal step,
   toe unchanged), and the leg is 1 mm longer (`leg_extra` = 1, 34.75 mm: foot 1 mm lower, 51 mm total with
-  the mount). `leg_extra` is read by `catch_common.scad` (undefined = 0, so other files are unaffected); B `include`s
+  the mount). `foot_extra` = 1 (foot projects 16 mm, user's request 2026-11-23) is read like `leg_extra`; `leg_extra` is read by `catch_common.scad` (undefined = 0, so other files are unaffected); B `include`s
   `catch_lower.scad`, which skips its own render when `catch_lower_B` is defined. The foot's top-edge chamfer stops at B's thickened front face (`foot_split_y` in `catch_lower.scad`; = `leg_y0` for the standard catch) so it runs flush into the thick leg; B must define `leg_b_add` before it includes `catch_lower.scad`. Flex force not checked. → `stl/catch_lower_B.stl`.
 - `catch_mount.scad` — mounting plate: dovetail channel open at both ends, countersunk screw hole,
   two detent dimples.
