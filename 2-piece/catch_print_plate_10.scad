@@ -29,7 +29,7 @@ enforcers = false;   // true: export the support-enforcer volumes instead (see c
 // ---- One set - same as catch_print_plate_multi.scad ----
 catch_x  = tongue_top_z + det_h;          // catch length on the bed
 mount_cx = foot_t + gap + plate_w/2;      // mount centre, beside the foot
-mount_cy = leg_y0 + plate_d/2;           // mount front edge flush with the leg's front face
+mount_cy = leg_front_y + plate_d/2;           // mount front edge flush with the thickened leg's front face
 set_y0   = foot_y0;                       // lowest Y of a set (foot tip)
 set_y1   = mount_cy + plate_d/2;          // highest Y of a set (mount edge)
 
@@ -39,7 +39,7 @@ assert(plate_w/2 - leg_w/2 >= mount_t + 0.2,
        "mount touches the leg - widen plate_w");
 
 pitch_x  = catch_x - foot_ext_z + gap;
-pitch_y  = set_y1 + gap - front_y;
+pitch_y  = set_y1 + gap - leg_front_y;
 set_h    = set_y1 - set_y0;
 
 function grid_w(c) = c * pitch_x - gap;

@@ -13,7 +13,7 @@ use <2-piece/catch_mount.scad>
 use <1-piece/catch_1piece.scad>
 
 gap      = 10;                          // spacing between the parts on the bed
-catch_w  = plate_d/2 - foot_y0;         // catch width once turned: foot tip to plate back, 45 (same for both variants)
+catch_w  = plate_d/2 - foot_y0;         // catch width once turned: foot tip to plate back, 48 (same for both variants)
 mount_x0 = tongue_top_z + det_h + gap;  // mount's left edge, as in 2-piece/catch_print_plate.scad
 
 // Turn a catch 90 deg about Z: its foot tip lands at X = x0, its bed face

@@ -29,10 +29,10 @@ enforcers = false;   // true: export the support-enforcer volumes instead (see c
 // Catch footprint is an L: foot at X foot_ext_z..foot_t (extension below 0),
 // leg along Y -15 .. -15+leg_t (root),
 // plate + tongue at X catch_h-plate_t .. catch_x.
-catch_x  = tongue_top_z + det_h;          // catch length on the bed, ~46.35
+catch_x  = tongue_top_z + det_h;          // catch length on the bed, ~47.35
 mount_cx = foot_t + gap + plate_w/2;      // mount centre, beside the foot
-mount_cy = leg_y0 + plate_d/2;           // mount centre: front edge flush with the leg's front face, mount under the leg
-set_y0   = foot_y0;                       // lowest Y of a set (foot tip), -30
+mount_cy = leg_front_y + plate_d/2;           // mount centre: front edge flush with the thickened leg's front face, mount under the leg
+set_y0   = foot_y0;                       // lowest Y of a set (foot tip), -33
 set_y1   = mount_cy + plate_d/2;          // highest Y of a set (mount edge)
 
 // The mount must fit between the foot and the leg-root fillet.
@@ -43,9 +43,9 @@ assert(plate_w/2 - leg_w/2 >= mount_t + 0.2,
        "mount touches the leg - widen plate_w");
 
 pitch_x  = catch_x - foot_ext_z + gap;
-// next row's leg (outer face at front_y) clears this row's mount and plate;
+// next row's leg (thickened front face at leg_front_y) clears this row's mount and plate;
 // its foot sits beside this row's mount (X 0..foot_t vs mount from foot_t + gap)
-pitch_y  = set_y1 + gap - front_y;
+pitch_y  = set_y1 + gap - leg_front_y;
 set_h    = set_y1 - set_y0;
 
 function n_cols(w) = max(0, floor((w - 2*margin + gap) / pitch_x));

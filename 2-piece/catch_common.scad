@@ -26,6 +26,12 @@ leg_t        = 3.4;  // leg thickness at the root, Y (flex direction) // guess
 leg_t_tip    = 2.0;  // leg thickness at the foot - linear taper spreads the strain along the leg // guess
 leg_fillet_r = 3;    // fillet at the leg root, back (tension) side // guess
 release_flex = 3;    // foot travel needed to release the catch
+// Leg thickening (was "version B", made the only 2-piece catch 2026-11-25). The flex analysis
+// below covers only the plain tapered leg, so it understates the stiffness.
+leg_front_drop = 10; // front thickening starts this far below the catch plate underside
+leg_front_add  = 3;  // extra thickness toward the front (-Y), from there down to the foot top (horizontal step)
+leg_back_add   = 1;  // extra thickness toward the back (+Y), parallel to the tapered back face,
+                     // full length of leg and foot down to the foot extension bottom
 
 // ---- Material: PLA ----
 mat_E        = 3300; // MPa, PLA printed with layers along the leg // guess (typical 3000-3500)
@@ -33,14 +39,15 @@ max_strain   = 0.01; // allowed peak strain for repeated flexing in PLA (yield ~
 
 // ---- Foot ----
 foot_w       = 7;    // foot width, X
-foot_proj    = 15 + (is_undef(foot_extra) ? 0 : foot_extra);   // how far the foot sticks out in front of the leg
+foot_proj    = 18;   // how far the foot sticks out in front of the leg (15 + 3 for version B, user's edit 2026-11-25)
 foot_t       = 5;    // foot thickness, Z
-foot_bevel   = 0.8;  // 45-degree chamfer on the foot's outside edges // guess
+foot_bevel   = 0.8;  // height of the toe's vertical front face above the 45-degree bottom bevel
+                     // (was a chamfer on the foot's top edges, removed 2026-11-25) // guess
+edge_fillet_r = 1;   // fillet on the foot's bottom side edges and the leg's back side edges // guess
 foot_ext_bot = 2;    // foot extends below z = 0 until its bottom is this long (Y): back edge
-                     // straight down, front a 45-degree bevel below the front-top chamfer
+                     // straight down, front a 45-degree bevel below the toe's vertical face
 
-// leg_extra: set by catch_lower_B.scad (before it includes this file) to lengthen the leg; undefined = 0
-total_h      = 50 + (is_undef(leg_extra) ? 0 : leg_extra);   // bottom of foot to top of mount (frame face) - overall assembled height
+total_h      = 51;   // bottom of foot to top of mount (frame face) - overall assembled height (50 + 1 mm longer leg, version B)
 
 // ---- Dovetail joint ----
 dt_h         = 4.0;   // tongue height
@@ -64,11 +71,12 @@ screw_csk_angle = 90; // included angle (82 for US imperial screws, 90 metric)
 // ---- Derived ----
 csk_depth    = (screw_head_d - screw_d) / 2 / tan(screw_csk_angle / 2);   // ~2.55
 mount_t      = dt_h + dt_clear + csk_depth + screw_meat;                   // ~8.25
-catch_h      = total_h - mount_t;            // foot bottom to catch plate top, ~41.75
-leg_h        = catch_h - plate_t - foot_t;   // flexing length, ~33.75
+catch_h      = total_h - mount_t;            // foot bottom to catch plate top, ~42.75
+leg_h        = catch_h - plate_t - foot_t;   // flexing length, ~34.75
 foot_l       = foot_proj + leg_t_tip;        // total foot length incl. the part under the leg
 front_y      = -plate_d / 2;
-leg_y0       = front_y;                      // leg flush with front edge
+leg_y0       = front_y;                      // leg flush with front edge (above the front thickening)
+leg_front_y  = leg_y0 - leg_front_add;       // front face of the thickened lower leg
 foot_y0      = leg_y0 + leg_t_tip - foot_l;  // foot projects forward (-Y)
 foot_ext_z   = foot_t - foot_bevel - (foot_l - foot_ext_bot);  // bottom of the foot extension, below z = 0
 plate_top_z  = catch_h;

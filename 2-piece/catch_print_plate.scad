@@ -4,8 +4,8 @@
 //          Needs support under the leg and foot only.
 //   Mount: frame face on the bed, dovetail groove facing up. No supports.
 //          It sits in the pocket between the catch's foot and plate,
-//          directly under the leg (front edge flush with the leg's front
-//          face), so the leg's supports stand on the mount's front rail
+//          directly under the leg (front edge flush with the thickened leg's
+//          front face), so the leg's supports stand on the mount's front rail
 //          instead of the bed - same nesting as catch_print_plate_multi.scad.
 // Export: flatpak run org.openscad.OpenSCAD -o "$PWD/stl/catch_print_plate.stl" "$PWD/catch_print_plate.scad"
 // ============================================================
@@ -18,7 +18,7 @@ gap = 2.5;  // spacing between the mount and the foot / leg-root fillet // guess
 enforcers = false;   // true: export the support-enforcer volume instead (see catch_lower.scad)
 
 mount_cx = foot_t + gap + plate_w/2;   // mount centre, beside the foot
-mount_cy = leg_y0 + plate_d/2;         // front edge flush with the leg's front face, mount under the leg
+mount_cy = leg_front_y + plate_d/2;    // front edge flush with the thickened leg's front face, mount under the leg
 
 assert(mount_cx + plate_w/2 + gap <= plate_bot_z - leg_fillet_r,
        "mount does not fit in the pocket under the leg");

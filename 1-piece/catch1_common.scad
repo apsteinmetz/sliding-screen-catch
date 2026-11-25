@@ -25,6 +25,12 @@ leg_t        = 3.9;  // leg thickness at the root, Y (flex direction) // guess
 leg_t_tip    = 2.2;  // leg thickness at the foot - linear taper spreads the strain along the leg // guess
 leg_fillet_r = 3;    // fillet at the leg root, back (tension) side // guess
 release_flex = 3;    // foot travel needed to release the catch
+// Leg thickening, same as the 2-piece (its former "version B"; added to the 1-piece 2026-11-25).
+// The flex analysis below covers only the plain tapered leg, so it understates the stiffness.
+leg_front_drop = 10; // front thickening starts this far below the plate underside
+leg_front_add  = 3;  // extra thickness toward the front (-Y), from there down to the foot top (horizontal step)
+leg_back_add   = 1;  // extra thickness toward the back (+Y), parallel to the tapered back face,
+                     // full length of leg and foot down to the foot extension bottom
 
 // ---- Material: PLA ----
 mat_E        = 3300; // MPa, PLA printed with layers along the leg // guess (typical 3000-3500)
@@ -32,13 +38,15 @@ max_strain   = 0.01; // allowed peak strain for repeated flexing in PLA (yield ~
 
 // ---- Foot ----
 foot_w       = 7;    // foot width, X
-foot_proj    = 15;   // how far the foot sticks out in front of the leg
+foot_proj    = 18;   // how far the foot sticks out in front of the leg (15 until 2026-11-25, as the 2-piece)
 foot_t       = 5;    // foot thickness, Z
-foot_bevel   = 0.8;  // 45-degree chamfer on the foot's outside edges // guess
+foot_bevel   = 0.8;  // height of the toe's vertical front face above the 45-degree bottom bevel
+                     // (was a chamfer on the foot's top edges, removed 2026-11-25) // guess
+edge_fillet_r = 1;   // fillet on the foot's bottom side edges and the leg's back side edges // guess
 foot_ext_bot = 2;    // foot extends below z = 0 until its bottom is this long (Y): back edge
-                     // straight down, front a 45-degree bevel below the front-top chamfer
+                     // straight down, front a 45-degree bevel below the toe's vertical face
 
-total_h      = 50;   // bottom of foot to frame face - overall installed height
+total_h      = 51;   // bottom of foot to frame face - overall installed height (50 until 2026-11-25, as the 2-piece)
 
 // ---- Wood screw (#8 / ~4 mm flat head) ----
 screw_d      = 4.5;  // shank clearance hole
@@ -49,10 +57,11 @@ screw_csk_angle = 90; // included angle (82 for US imperial screws, 90 metric)
 csk_depth    = (screw_head_d - screw_d) / 2 / tan(screw_csk_angle / 2);   // ~2.55
 plate_t      = csk_depth + screw_meat;      // ~5.55, countersunk from below
 plate_bot_z  = total_h - plate_t;
-leg_h        = plate_bot_z - foot_t;        // flexing length, ~39.45
+leg_h        = plate_bot_z - foot_t;        // flexing length, ~40.45
 foot_l       = foot_proj + leg_t_tip;       // total foot length incl. the part under the leg
 front_y      = -plate_d / 2;
-leg_y0       = front_y;                     // leg flush with front edge
+leg_y0       = front_y;                     // leg flush with front edge (above the front thickening)
+leg_front_y  = leg_y0 - leg_front_add;      // front face of the thickened lower leg
 foot_y0      = leg_y0 + leg_t_tip - foot_l; // foot projects forward (-Y)
 foot_ext_z   = foot_t - foot_bevel - (foot_l - foot_ext_bot);  // bottom of the foot extension, below z = 0
 
